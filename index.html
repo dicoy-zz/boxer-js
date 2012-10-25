@@ -1,28 +1,31 @@
-<!--Last update = 2012-25-10 3:41AM-->
+<!--Last update = 2012-25-10 5:15AM-->
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Box Loader</title>
-        <style media="screen">
-            body {
-                background: #333;
-                margin: 0 30px;}
+	<head>
+		<meta charset="utf-8">
+		<title>Box Loader</title>
+		<head profile="http://www.w3.org/2005/10/profile">
+		<link rel="icon" type="image/png" href="{{STATIC_URL}}boxer-js/fbmini.png">
+		<link rel="image_src" href="{{STATIC_URL}}boxer-js/fbmini.png">
+		<style media="screen">
+			body {
+				background: #333;
+				margin: 0 30px;}
 
-        	.box {
+			.box {
 				stroke:black;
 				stroke-width:5;
 				opacity:0.5;}
 			svg {
 				padding: 15px;}
-        </style>
-    </head>
-    <body>
+		</style>
+	</head>
+	<body>
 		<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
 		</svg>
 		<script type_"text/javascript">
 			var lastBox = 0;
-			var colors = ["red","orange","yellow","green","blue","purple","magenta","cyan"];
+			var colors = ["red","orange","yellow","green","blue","purple","cyan","magenta","grey"];
 			var boxes = []
 			var makeBox = function (x,y,c){
 				svgDoc=document.getElementsByTagName('svg')[0]
@@ -50,21 +53,21 @@
 					boxes.push(makeBox(x*335,y*335,colors[(y*(1+vBoxes)+x)%7]));
 					}}
 			window.onresize = function(event) {
-			    vBoxes=Math.floor(window.innerHeight/335);
-			    hBoxes=Math.floor((window.innerWidth-45)/335);
+				vBoxes=Math.floor(window.innerHeight/335);
+				hBoxes=Math.floor((window.innerWidth-45)/335);
 		for (i=0;i<boxes.length;++i){
-		    nx = i%hBoxes;
-		    ny = (i-nx)/hBoxes;
-		    boxes[i].setAttribute("x",(nx)*335);
-			    boxes[i].setAttribute("y",(ny)*335);
+			nx = i%hBoxes;
+			ny = (i-nx)/hBoxes;
+			boxes[i].setAttribute("x",(nx)*335);
+				boxes[i].setAttribute("y",(ny)*335);
 				window.console.log('moving '+i+' to ('+nx+','+ny+')|'+i+'|'+hBoxes+'|'+vBoxes);
-			    }
-			    /*for (x=boxes.length%hBoxes;x<hBoxes;++x){
-				    for (y=boxes.length%hBoxes;y<vBoxes;++y){
-				        id = y*(1+vBoxes)+x;
-					    boxes.push(makeBox(x*335,y*335,colors[(id)%7]));
-					    window.console.log('creating '+id+' at '+x+', '+y);
-				    }}*/}
+				}
+				/*for (x=boxes.length%hBoxes;x<hBoxes;++x){
+					for (y=boxes.length%hBoxes;y<vBoxes;++y){
+						id = y*(1+vBoxes)+x;
+						boxes.push(makeBox(x*335,y*335,colors[(id)%7]));
+						window.console.log('creating '+id+' at '+x+', '+y);
+					}}*/}
 		</script>
-    </body>
+	</body>
 </html>
