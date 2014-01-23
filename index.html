@@ -1,12 +1,9 @@
-<!--Last update = 2012-25-10 5:15AM-->
+<!--Last update = 2013-01-09 10:29AM-->
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
 		<title>Box Loader</title>
-		<head profile="http://www.w3.org/2005/10/profile">
-		<link rel="icon" type="image/png" href="{{STATIC_URL}}boxer-js/fbmini.png">
-		<link rel="image_src" href="{{STATIC_URL}}boxer-js/fbmini.png">
 		<style media="screen">
 			body {
 				background: #333;
@@ -15,59 +12,90 @@
 			.box {
 				stroke:black;
 				stroke-width:5;
-				opacity:0.5;}
+				opacity:0.6;}
+			.box_menu {
+				opacity:0.5;
+				stroke:darkgrey;
+				stroke-width:4;
+				stroke-opacity:0.6;}
 			svg {
 				padding: 15px;}
 		</style>
 	</head>
 	<body>
-		<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+		<svg id="main" xmlns="http://www.w3.org/2000/svg" version="1.1">
 		</svg>
 		<script type_"text/javascript">
 			var lastBox = 0;
-			var colors = ["red","orange","yellow","green","blue","purple","cyan","magenta","grey"];
+			var colors = ["red","orange","yellow","green","blue","purple","magenta","cyan","grey"];
 			var boxes = []
-			var makeBox = function (x,y,c){
-				svgDoc=document.getElementsByTagName('svg')[0]
+			var makeBoxMenu = function(x, y, b){
+				svgDoc = document.getElementsByTagName('svg')[0]
 				var shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-				shape.setAttribute("fill",c);
-				shape.setAttribute("class","box");
-				shape.setAttribute("x",x);
-				shape.setAttribute("y",y);
-				shape.setAttribute("rx","20");
-				shape.setAttribute("ry","20");
-				shape.setAttribute("width","320");
-				shape.setAttribute("height","320");
-				shape.setAttribute("id","box_" + lastBox++);
+				shape.setAttribute("fill", "black");
+				shape.setAttribute("class", "box_menu");
+				shape.setAttribute("x", x + 5);
+				shape.setAttribute("y", y + 8);
+				shape.setAttribute("rx", "15");
+				shape.setAttribute("ry", "15");
+				shape.setAttribute("width", "310");
+				shape.setAttribute("height", "35");
+				shape.setAttribute("id", "box_menu_" + b.id);
 				svgDoc.appendChild(shape);
-				return document.getElementById("box_" + (lastBox-1));
+				return document.getElementById("box_menu" + (lastBox - 1));
+				}
+			var makeBox = function (x, y, c){
+				svgDoc = document.getElementsByTagName('svg')[0]
+				var shape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+				shape.setAttribute("fill", c);
+				shape.setAttribute("stroke", (c=="blueviolet")?"darkslateblue":(c=="yellow")?"goldenrod":"dark" + c);
+				shape.setAttribute("class", "box");
+				shape.setAttribute("x", x);
+				shape.setAttribute("y", y);
+				shape.setAttribute("rx", "20");
+				shape.setAttribute("ry", "20");
+				shape.setAttribute("width", "320");
+				shape.setAttribute("height", "320");
+				shape.setAttribute("id", "box_" + lastBox++);
+				svgDoc.appendChild(shape);
+				b = document.getElementById("box_" + (lastBox - 1));
+				f=document.createElementNS("http://www.w3.org/2000/svg","foreignObject");
+				f.setAttribute("width","100");
+				f.setAttribute("height","50");
+				//f.setAttribute("requiredExtensions","http://www.w3.org/1999/xhtml");
+				bd=document.createElementNS("http://www.w3.org/1999/xhtml","body");
+				bd.setAttribute("xmlns","http://www.w3.org/1999/xhtml");
+				p=document.createElementNS("http://www.w3.org/1999/xhtml","p");
+				p.innerHTML="Hola, soy in parrafo!!";
+				bd.appendChild(p);
+				f.appendChild(bd);
+				b.appendChild(f);
+				return {
+					box: b,
+					box_menu: makeBoxMenu(x, y, b)
+					};
+				}
+			var addBox = function(){
+				x = boxes.length % hBoxes;
+				y = Math.floor(boxes.length / hBoxes);
+				boxes.push(makeBox(x * 335, y * 335, colors[(y * hBoxes + x) % colors.length]));
+				document.getElementById('main').setAttribute('height',+ 335 * (y+1) + 'px');
 				}
 			var romoveBox = function(id){
 				id.parentNode.removeChild(id);
 				return id;
 				}
-			vBoxes = Math.floor(window.innerHeight/335);
-			hBoxes = Math.floor((window.innerWidth-45)/335);
-			for (y=0;y<vBoxes;++y){
-				for (x=0;x<hBoxes;++x){
-					boxes.push(makeBox(x*335,y*335,colors[(y*(1+vBoxes)+x)%7]));
-					}}
+			hBoxes = Math.floor((window.innerWidth - 45) / 335);
 			window.onresize = function(event) {
-				vBoxes=Math.floor(window.innerHeight/335);
-				hBoxes=Math.floor((window.innerWidth-45)/335);
-		for (i=0;i<boxes.length;++i){
-			nx = i%hBoxes;
-			ny = (i-nx)/hBoxes;
-			boxes[i].setAttribute("x",(nx)*335);
-				boxes[i].setAttribute("y",(ny)*335);
-				window.console.log('moving '+i+' to ('+nx+','+ny+')|'+i+'|'+hBoxes+'|'+vBoxes);
+				hBoxes=Math.floor((window.innerWidth - 45) / 335);
+				for (i = 0; i < boxes.length; ++i){
+					nx = i % hBoxes;
+					ny = Math.floor((i - nx) / hBoxes);
+					boxes[i].box.setAttribute("x", nx * 335);
+					boxes[i].box.setAttribute("y", ny * 335);
+					}
+				document.getElementById('main').setAttribute('height', 335 * Math.ceil(boxes.length / hBoxes) + 'px');
 				}
-				/*for (x=boxes.length%hBoxes;x<hBoxes;++x){
-					for (y=boxes.length%hBoxes;y<vBoxes;++y){
-						id = y*(1+vBoxes)+x;
-						boxes.push(makeBox(x*335,y*335,colors[(id)%7]));
-						window.console.log('creating '+id+' at '+x+', '+y);
-					}}*/}
 		</script>
 	</body>
 </html>
